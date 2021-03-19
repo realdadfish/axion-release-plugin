@@ -24,7 +24,7 @@ class NextVersionMarkerTest extends RepositoryBasedTest {
 
     Project project = ProjectBuilder.builder().build()
 
-    VersionConfig config = new VersionConfig(project)
+    VersionConfig config = project.extensions.create('versionConfig', VersionConfig, project)
 
     def setup() {
         repository = context.repository()
