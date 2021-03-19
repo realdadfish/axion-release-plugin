@@ -2,7 +2,6 @@ package pl.allegro.tech.build.axion.release
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import pl.allegro.tech.build.axion.release.domain.VersionConfig
 
 class ReleasePlugin implements Plugin<Project> {
@@ -20,6 +19,8 @@ class ReleasePlugin implements Plugin<Project> {
     public static final String MARK_NEXT_VERSION_TASK = 'markNextVersion'
 
     public static final String CURRENT_VERSION_TASK = 'currentVersion'
+
+    public static final String PIN_VERSION_TASK = 'pinVersion'
 
     public static final String DRY_RUN_FLAG = 'release.dryRun'
 
@@ -57,6 +58,16 @@ class ReleasePlugin implements Plugin<Project> {
         project.tasks.register(CURRENT_VERSION_TASK, OutputCurrentVersionTask) {
             group = 'Help'
             description = 'Prints current project version extracted from SCM.'
+        }
+
+        project.afterEvaluate {
+            VersionConfig versionConfig = project.extensions.getByType(VersionConfig)
+            if (versionConfig.pinning.enabled) {
+                project.tasks.register(PIN_VERSION_TASK, PinVersionTask) {
+                    group = 'Release'
+                    description = 'Writes the current release version into a file, for later usage by the plugin'
+                }
+            }
         }
     }
 }
